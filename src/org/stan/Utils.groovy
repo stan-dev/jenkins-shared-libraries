@@ -22,8 +22,10 @@ def killOldBuilds() {
   }
 }
 
-def updateUpstream(String upstreamRepo) {
-    if (isBranch('develop')) {
+def isBranch(env, String b) { env.BRANCH_NAME == b }
+
+def updateUpstream(env, String upstreamRepo) {
+    if (isBranch(env, 'develop')) {
         node('master') {
             retry(3) {
                 checkout([$class: 'GitSCM',
