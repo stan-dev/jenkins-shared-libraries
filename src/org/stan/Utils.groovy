@@ -50,3 +50,20 @@ def updateUpstream(env, String upstreamRepo) {
         }
     }
 }
+
+def mailBuildResults(String label, additionalEmails='') {
+    script {
+        try {
+            emailext (
+                subject: "[StanJenkins] ${label}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
+                body: """${label}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]': Check console output at ${env.BUILD_URL}""",
+                recipientProviders: [[$class: 'RequesterRecipientProvider']],
+                to: "${env.CHANGE_AUTHOR_EMAIL}, ${additionalEmails}"
+            )
+        } catch (all) {
+            println "Encountered the following exception sending email; please ignore:"
+            println all
+            println "End ignoreable email-sending exception."
+        }
+    }
+}
