@@ -26,7 +26,7 @@ def isBranch(env, String b) { env.BRANCH_NAME == b }
 
 def updateUpstream(env, String upstreamRepo) {
     if (isBranch(env, 'develop')) {
-        node('master') {
+        node('osx || linux') {
             retry(3) {
                 checkout([$class: 'GitSCM',
                         branches: [[name: '*/develop']],
