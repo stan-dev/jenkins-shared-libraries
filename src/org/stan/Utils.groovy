@@ -26,7 +26,7 @@ def isBranch(env, String b) { env.BRANCH_NAME == b }
 
 def updateUpstream(env, String upstreamRepo) {
     if (isBranch(env, 'develop')) {
-        node('osx || linux') {
+        node('linux') {
             retry(3) {
                 deleteDir()
                 withCredentials([
