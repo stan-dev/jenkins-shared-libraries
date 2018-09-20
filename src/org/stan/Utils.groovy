@@ -40,7 +40,7 @@ def updateUpstream(env, String upstreamRepo) {
                 git config --global user.email "mc.stanislaw@gmail.com"
                 git config --global user.name "Stan Jenkins"
                 curl -O https://raw.githubusercontent.com/stan-dev/ci-scripts/master/jenkins/create-${upstreamRepo}-pull-request.sh
-                sh create-${upstreamRepo}-pull-request.sh
+                bash create-${upstreamRepo}-pull-request.sh
             """
                 deleteDir() // don't leave credentials on disk
             }
