@@ -36,7 +36,7 @@ def updateUpstream(env, String upstreamRepo) {
                     sh "git clone --recursive https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/stan-dev/${upstreamRepo}.git"
                 }
                 sh """
-                cd cmdstan
+                cd ${upstreamRepo}
                 git config --global user.email "mc.stanislaw@gmail.com"
                 git config --global user.name "Stan Jenkins"
                 curl -O https://raw.githubusercontent.com/stan-dev/ci-scripts/master/jenkins/create-${upstreamRepo}-pull-request.sh
