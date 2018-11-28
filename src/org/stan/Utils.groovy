@@ -48,7 +48,7 @@ def updateUpstream(env, String upstreamRepo) {
     }
 }
 
-def mailBuildResults(String _, additionalEmails='') {
+def mailBuildResults(String _ = "", additionalEmails='') {
     script {
         try {
             emailext (
