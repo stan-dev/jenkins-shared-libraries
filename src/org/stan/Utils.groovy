@@ -48,12 +48,15 @@ def updateUpstream(env, String upstreamRepo) {
     }
 }
 
-def mailBuildResults(String label, additionalEmails='') {
+def mailBuildResults(String _, additionalEmails='') {
     script {
         try {
             emailext (
-                subject: "[StanJenkins] ${label}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
-                body: """${label}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]': Check console output at ${env.BUILD_URL}""",
+                subject: "[StanJenkins] ${currentBuild.result}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
+                body: """${label}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]': Check console output at ${env.BUILD_URL}
+
+Or, check out the new blue ocean view (easier for most errors) at ${env.RUN_DISPLAY_URL}
+""",
                 recipientProviders: [[$class: 'RequesterRecipientProvider']],
                 to: "${env.CHANGE_AUTHOR_EMAIL}, ${additionalEmails}"
             )
