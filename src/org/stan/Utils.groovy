@@ -57,8 +57,8 @@ def mailBuildResults(String _ = "", additionalEmails='') {
 
 Or, check out the new blue ocean view (easier for most errors) at ${env.RUN_DISPLAY_URL}
 """,
-                recipientProviders: [[$class: 'RequesterRecipientProvider']],
-                to: "${env.CHANGE_AUTHOR_EMAIL}, ${additionalEmails}"
+                recipientProviders: [brokenBuildSuspects(), requestor()],
+                to: additionalEmails
             )
         } catch (all) {
             println "Encountered the following exception sending email; please ignore:"
