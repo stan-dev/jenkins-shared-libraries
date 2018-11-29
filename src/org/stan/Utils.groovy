@@ -57,7 +57,7 @@ def mailBuildResults(String _ = "", additionalEmails='') {
 
 Or, check out the new blue ocean view (easier for most errors) at ${env.RUN_DISPLAY_URL}
 """,
-                recipientProviders: [brokenBuildSuspects(), requestor()],
+                recipientProviders: [brokenBuildSuspects(), requestor(), culprits()],
                 to: additionalEmails
             )
         } catch (all) {
