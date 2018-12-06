@@ -53,7 +53,8 @@ def mailBuildResults(String _ = "", additionalEmails='') {
         try {
             emailext (
                 subject: "[StanJenkins] ${currentBuild.currentResult}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
-                body: """${currentBuild.currentResult}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]': Check console output at ${env.BUILD_URL}
+                body: """${currentBuild.currentResult}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.CHANGE_TITLE} ${env.BRANCH_NAME}): Check console output at ${env.BUILD_URL}
+
 
 Or, check out the new blue ocean view (easier for most errors) at ${env.RUN_DISPLAY_URL}
 """,
