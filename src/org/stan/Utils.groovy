@@ -68,3 +68,19 @@ Or, check out the new blue ocean view (easier for most errors) at ${env.RUN_DISP
         }
     }
 }
+
+def checkout_pr(String repo, String dir, String pr) {
+    if (pr == '') { pr = 'develop' }
+    prNumber = pr.tokenize('-').last()
+    if (pr.startsWith("PR-")) {
+        sh """
+          cd ${dir}
+          git fetch https://github.com/stan-dev/${repo} +refs/pull/${prNumber}/merge:refs/remotes/origin/pr/${prNumber}/merge
+          git checkout refs/remotes/origin/pr/${prNumber}/merge
+        """
+    } else {
+        sh "cd ${dir} && git checkout ${pr} && git pull origin ${pr}"
+
+    }
+    sh "cd ${dir} && git clean -xffd"
+}
