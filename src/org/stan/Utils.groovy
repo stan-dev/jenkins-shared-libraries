@@ -50,6 +50,7 @@ def updateUpstream(env, String upstreamRepo) {
 
 def mailBuildResults(String _ = "", additionalEmails='') {
     script {
+        if (env.BRANCH_NAME == 'downstream_tests') return
         try {
             emailext (
                 subject: "[StanJenkins] ${currentBuild.currentResult}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
