@@ -53,7 +53,7 @@ def isBuildAReplay() {
   currentBuild.rawBuild.getCauses().any{ cause -> cause.toString().contains(replyClassName) }
 }
 
-def verifyChanges() {
+def verifyChanges(String sourceCodePaths) {
 
     def commitHash = sh(script: "git rev-parse HEAD | tr '\\n' ' '", returnStdout: true)
     def changeTarget = ""
@@ -79,7 +79,7 @@ def verifyChanges() {
     println "Comparing differences between current ${commitHash} and target ${changeTarget}"
 
     def bashScript = """
-        for i in ${env.scPaths};
+        for i in ${sourceCodePaths};
         do
             git diff ${commitHash} ${changeTarget} -- \$i
         done
