@@ -55,6 +55,9 @@ def isBuildAReplay() {
 
 def verifyChanges(String sourceCodePaths) {
 
+    println sh(script: "pwd", returnStdout: true)
+    println sh(script: "ls -lhart", returnStdout: true)
+
     def commitHash = sh(script: "git rev-parse HEAD | tr '\\n' ' '", returnStdout: true)
     def changeTarget = ""
 
