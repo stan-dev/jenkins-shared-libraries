@@ -90,14 +90,15 @@ def verifyChanges(String sourceCodePaths) {
 
     if (differences?.trim()) {
         println "There are differences in the source code, CI/CD will run."
-        skipRemainingStages = false
+        return false
     }
     else if (isBuildAReplay()){
-        skipRemainingStages = false
+        println "Build is a replay."
+        return false
     }
     else{
         println "There aren't any differences in the source code, CI/CD will not run."
-        skipRemainingStages = true
+        return true
     }
 }
 
