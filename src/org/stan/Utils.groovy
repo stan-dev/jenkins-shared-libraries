@@ -60,7 +60,7 @@ def verifyChanges(String sourceCodePaths) {
     println sh(script: "git status", returnStdout: true)
     println sh(script: "git rev-parse HEAD", returnStdout: true)
 
-    def commitHash = sh(script: "git rev-parse HEAD | tr '\\n' ' '", returnStdout: true)
+    def commitHash = sh(script: "git rev-parse HEAD", returnStdout: true).trim()
     def changeTarget = ""
 
     if (env.CHANGE_TARGET) {
