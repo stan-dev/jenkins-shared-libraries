@@ -81,7 +81,7 @@ def verifyChanges(String sourceCodePaths) {
     def bashScript = """
         for i in ${sourceCodePaths};
         do
-            git diff ${commitHash} ${changeTarget} -- \$i
+            git diff --submodule=diff ${commitHash} ${changeTarget} -- \$i
         done
     """
 
