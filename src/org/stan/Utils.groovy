@@ -66,9 +66,10 @@ def verifyChanges(String sourceCodePaths) {
     else{
         println "This build is not PR, checking out current branch and extract HEAD^1 commit to compare changes or develop when downstream_tests."
         if (env.BRANCH_NAME == "downstream_tests"){
-            sh(script: "git checkout develop && git pull", returnStdout: false)
-            changeTarget = sh(script: "git rev-parse HEAD^1 | tr '\\n' ' '", returnStdout: true)
-            sh(script: "git checkout ${commitHash}", returnStdout: false)
+            //sh(script: "git checkout develop && git pull", returnStdout: false)
+            //changeTarget = sh(script: "git rev-parse HEAD^1 | tr '\\n' ' '", returnStdout: true)
+            //sh(script: "git checkout ${commitHash}", returnStdout: false)
+            return false
         }
         else{
             sh(script: "git pull && git checkout ${env.BRANCH_NAME}", returnStdout: false)
