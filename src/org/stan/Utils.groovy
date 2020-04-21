@@ -53,7 +53,7 @@ def isBuildAReplay() {
   currentBuild.rawBuild.getCauses().any{ cause -> cause.toString().contains(replyClassName) }
 }
 
-def verifyChanges(String sourceCodePaths, Boolean skipCi = false) {
+def verifyChanges(String sourceCodePaths) {
 
     def commitHash = sh(script: "git rev-parse HEAD | tr '\\n' ' '", returnStdout: true)
     def changeTarget = ""
@@ -69,6 +69,12 @@ def verifyChanges(String sourceCodePaths, Boolean skipCi = false) {
             //sh(script: "git checkout develop && git pull", returnStdout: false)
             //changeTarget = sh(script: "git rev-parse HEAD^1 | tr '\\n' ' '", returnStdout: true)
             //sh(script: "git checkout ${commitHash}", returnStdout: false)
+
+            // Exception added for Math PR #1832
+            if (params.math_pr != null && params.math_pr == "PR-1832"){
+                return true
+            }
+
             return false
         }
         else{
