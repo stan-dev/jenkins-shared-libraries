@@ -53,7 +53,7 @@ def isBuildAReplay() {
   currentBuild.rawBuild.getCauses().any{ cause -> cause.toString().contains(replyClassName) }
 }
 
-def verifyChanges(String sourceCodePaths) {
+def verifyChanges(String sourceCodePaths, Boolean skipCi = false) {
 
     def commitHash = sh(script: "git rev-parse HEAD | tr '\\n' ' '", returnStdout: true)
     def changeTarget = ""
