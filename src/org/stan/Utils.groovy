@@ -58,7 +58,7 @@ def verifyChanges(String sourceCodePaths) {
     def commitHash = sh(script: "git rev-parse HEAD | tr '\\n' ' '", returnStdout: true)
     def changeTarget = ""
 
-    sh(script: "git config remote.origin.fetch '+refs/heads/*:refs/remotes/origin/*'", returnStdout: true)
+    sh(script: "git config remote.origin.fetch '+refs/heads/*:refs/remotes/origin/*' --replace-all", returnStdout: true)
     sh(script: "git fetch --all", returnStdout: true)
   
     if (env.CHANGE_TARGET) {
