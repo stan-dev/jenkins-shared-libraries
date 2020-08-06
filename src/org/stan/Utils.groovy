@@ -58,6 +58,8 @@ def verifyChanges(String sourceCodePaths) {
     def commitHash = sh(script: "git rev-parse HEAD | tr '\\n' ' '", returnStdout: true)
     def changeTarget = ""
 
+    sh(script: "git fetch", returnStdout: true)
+  
     if (env.CHANGE_TARGET) {
         println "This build is a PR, checking out target branch to compare changes."
         changeTarget = env.CHANGE_TARGET
