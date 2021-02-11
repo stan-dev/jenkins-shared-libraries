@@ -68,10 +68,7 @@ def verifyChanges(String sourceCodePaths) {
     }
     else{
         println "This build is not PR, checking out current branch and extract HEAD^1 commit to compare changes or develop when downstream_tests."
-        if (env.BRANCH_NAME == "downstream_tests"){
-            //sh(script: "git checkout develop && git pull", returnStdout: false)
-            //changeTarget = sh(script: "git rev-parse HEAD^1 | tr '\\n' ' '", returnStdout: true)
-            //sh(script: "git checkout ${commitHash}", returnStdout: false)
+        if (env.BRANCH_NAME == "downstream_tests" || env.BRANCH_NAME == "downstream_hotfix"){
 
             // Exception added for Math PR #1832
             if (params.math_pr != null && params.math_pr == "PR-1832"){
