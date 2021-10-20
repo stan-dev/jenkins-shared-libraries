@@ -74,7 +74,7 @@ def verifyChanges(String sourceCodePaths) {
                 git config --global user.email "mc.stanislaw@gmail.com"
                 git config --global user.name "Stan Jenkins"
 
-                git remote rm forkedOrigin
+                git remote rm forkedOrigin || true
                 git remote add forkedOrigin https://github.com/${env.CHANGE_FORK}/${currentRepository}
                 git fetch forkedOrigin
             """)
