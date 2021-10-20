@@ -77,6 +77,7 @@ def verifyChanges(String sourceCodePaths) {
                 git remote rm forkedOrigin || true
                 git remote add forkedOrigin https://github.com/${env.CHANGE_FORK}/${currentRepository}
                 git fetch forkedOrigin
+                git pull && git checkout ${changeTarget}
             """)
         }
         else {
