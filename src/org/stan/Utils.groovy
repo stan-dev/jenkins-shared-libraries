@@ -57,14 +57,35 @@ def verifyChanges(String sourceCodePaths) {
 
     def commitHash = sh(script: "git rev-parse HEAD | tr '\\n' ' '", returnStdout: true)
     def changeTarget = ""
+    def currentRepository = sh(script: "echo ${env.GIT_URL} | cut -d'/' -f 5", returnStdout: true)
 
+    sh(script:"ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts", returnStdout: false)
     sh(script: "git config remote.origin.fetch '+refs/heads/*:refs/remotes/origin/*' --replace-all", returnStdout: true)
     sh(script: "git fetch --all", returnStdout: true)
-  
+
     if (env.CHANGE_TARGET) {
         println "This build is a PR, checking out target branch to compare changes."
         changeTarget = env.CHANGE_TARGET
-        sh(script: "git pull && git checkout ${changeTarget}", returnStdout: false)
+
+        if (env.CHANGE_FORK) {
+            println "This PR is a fork."
+
+            sh("""
+                git config --global user.email "mc.stanislaw@gmail.com"
+                git config --global user.name "Stan Jenkins"
+
+                echo ${env.CHANGE_FORK}
+                echo ${currentRepository}
+
+                git remote rm forkedOrigin
+                git remote add forkedOrigin https://github.com/${env.CHANGE_FORK}/${currentRepository}
+                git fetch forkedOrigin
+            """)
+        }
+        else {
+            sh(script: "git pull && git checkout ${changeTarget}", returnStdout: false)
+        }
+
     }
     else{
         println "This build is not PR, checking out current branch and extract HEAD^1 commit to compare changes or develop when downstream_tests."
@@ -83,16 +104,26 @@ def verifyChanges(String sourceCodePaths) {
         }
     }
 
-    println "Comparing differences between current ${commitHash} and target ${changeTarget}"
+    def differences = ""
+    if (env.CHANGE_FORK) {
+        println "Comparing differences between current ${commitHash} from forked repository ${env.CHANGE_FORK}/${currentRepository} and target ${changeTarget}"
+        differences = sh(script: """
+            for i in ${sourceCodePaths};
+            do
+                git diff forkedOrigin/${env.CHANGE_BRANCH} ${changeTarget} -- \$i
+            done
+        """, returnStdout: true)
+    }
+    else{
+        println "Comparing differences between current ${commitHash} and target ${changeTarget}"
+        differences = sh(script: """
+            for i in ${sourceCodePaths};
+            do
+                git diff ${commitHash} ${changeTarget} -- \$i
+            done
+        """, returnStdout: true)
+    }
 
-    def bashScript = """
-        for i in ${sourceCodePaths};
-        do
-            git diff ${commitHash} ${changeTarget} -- \$i
-        done
-    """
-
-    def differences = sh(script: bashScript, returnStdout: true)
     println differences
 
     if (differences?.trim()) {
