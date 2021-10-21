@@ -66,9 +66,10 @@ def verifyChanges(String sourceCodePaths) {
         currentRepository = sh(script: "echo ${env.CHANGE_URL} | cut -d'/' -f 5", returnStdout: true)
     }
 
+    currentRepository = currentRepository.trim() + ".git"
+
     sh(script:"ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts", returnStdout: false)
     sh(script: "git config remote.origin.fetch '+refs/heads/*:refs/remotes/origin/*' --replace-all", returnStdout: true)
-    sh(script: "git remote rm forkedOrigin || true", returnStdout: true)
     sh(script: "git fetch --all", returnStdout: true)
 
     if (env.CHANGE_TARGET) {
@@ -83,7 +84,7 @@ def verifyChanges(String sourceCodePaths) {
                 git config --global user.name "Stan Jenkins"
                 git pull && git checkout origin/${changeTarget}
 
-                git remote add forkedOrigin https://github.com/${env.CHANGE_FORK}/${currentRepository}.git
+                git remote add forkedOrigin https://github.com/${env.CHANGE_FORK}/${currentRepository}
                 git fetch forkedOrigin
             """)
         }
@@ -111,7 +112,7 @@ def verifyChanges(String sourceCodePaths) {
 
     def differences = ""
     if (env.CHANGE_FORK) {
-        println "Comparing differences between current ${commitHash} from forked repository ${env.CHANGE_FORK}/${currentRepository}.git and target ${changeTarget}"
+        println "Comparing differences between current ${commitHash} from forked repository ${env.CHANGE_FORK}/${currentRepository} and target ${changeTarget}"
         differences = sh(script: """
             for i in ${sourceCodePaths};
             do
@@ -130,6 +131,9 @@ def verifyChanges(String sourceCodePaths) {
     }
 
     println differences
+
+    // Remove origin
+    sh(script: "git remote rm forkedOrigin || true", returnStdout: true)
 
     if (differences?.trim()) {
         println "There are differences in the source code, CI/CD will run."
