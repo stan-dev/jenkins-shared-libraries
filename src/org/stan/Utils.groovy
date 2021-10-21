@@ -73,11 +73,11 @@ def verifyChanges(String sourceCodePaths) {
             sh("""
                 git config --global user.email "mc.stanislaw@gmail.com"
                 git config --global user.name "Stan Jenkins"
+                git pull && git checkout origin/${changeTarget}
 
                 git remote rm forkedOrigin || true
                 git remote add forkedOrigin https://github.com/${env.CHANGE_FORK}/${currentRepository}
                 git fetch forkedOrigin
-                git pull && git checkout ${changeTarget}
             """)
         }
         else {
@@ -108,7 +108,7 @@ def verifyChanges(String sourceCodePaths) {
         differences = sh(script: """
             for i in ${sourceCodePaths};
             do
-                git diff forkedOrigin/${env.CHANGE_BRANCH} ${changeTarget} -- \$i
+                git diff forkedOrigin/${env.CHANGE_BRANCH} origin/${changeTarget} -- \$i
             done
         """, returnStdout: true)
     }
