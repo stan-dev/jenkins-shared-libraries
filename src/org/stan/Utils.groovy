@@ -82,10 +82,14 @@ def verifyChanges(String sourceCodePaths) {
                 git config --global user.email "mc.stanislaw@gmail.com"
                 git config --global user.name "Stan Jenkins"
                 git pull && git checkout origin/${changeTarget}
-
-                git remote add forkedOrigin https://github.com/${env.CHANGE_FORK}/${currentRepository}
-                git fetch forkedOrigin
             """)
+
+            withCredentials([usernamePassword(credentialsId: 'a630aebc-6861-4e69-b497-fd7f496ec46b', usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
+                sh """#!/bin/bash
+                   git remote add forkedOrigin https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${env.CHANGE_FORK}/${currentRepository}
+                   git fetch forkedOrigin
+                """
+            }
         }
         else {
             sh(script: "git pull && git checkout ${changeTarget}", returnStdout: false)
