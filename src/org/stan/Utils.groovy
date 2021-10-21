@@ -70,6 +70,7 @@ def verifyChanges(String sourceCodePaths) {
 
     sh(script:"ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts", returnStdout: false)
     sh(script: "git config remote.origin.fetch '+refs/heads/*:refs/remotes/origin/*' --replace-all", returnStdout: true)
+    sh(script: "git remote rm forkedOrigin || true", returnStdout: true)
     sh(script: "git fetch --all", returnStdout: true)
 
     if (env.CHANGE_TARGET) {
