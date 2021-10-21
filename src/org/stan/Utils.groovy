@@ -57,7 +57,19 @@ def verifyChanges(String sourceCodePaths) {
 
     def commitHash = sh(script: "git rev-parse HEAD | tr '\\n' ' '", returnStdout: true)
     def changeTarget = ""
-    def currentRepository = sh(script: "echo ${env.GIT_URL} | cut -d'/' -f 5", returnStdout: true)
+    def currentRepository = ""
+
+    if (env.GIT_URL) {
+        currentRepository = sh(script: "echo ${env.GIT_URL} | cut -d'/' -f 5", returnStdout: true)
+    }
+    else{
+        currentRepository = sh(script: "git config --get remote.origin.url | cut -d'/' -f 2", returnStdout: true)
+    }
+
+    sh("echo ${env.GIT_URL}")
+    sh("echo ${env.GIT_URL}")
+    sh("echo ${env.CHANGE_FORK}")
+
 
     sh(script:"ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts", returnStdout: false)
     sh(script: "git config remote.origin.fetch '+refs/heads/*:refs/remotes/origin/*' --replace-all", returnStdout: true)
