@@ -55,7 +55,7 @@ def isBuildAReplay() {
 
 def verifyChanges(String sourceCodePaths) {
 
-    def commitHash = sh(script: "git rev-parse HEAD | tr '\\n' ' '", returnStdout: true)
+    def commitHash = ""
     def changeTarget = ""
     def currentRepository = ""
 
@@ -81,17 +81,21 @@ def verifyChanges(String sourceCodePaths) {
             sh("""
                 git config --global user.email "mc.stanislaw@gmail.com"
                 git config --global user.name "Stan Jenkins"
-                git pull && git checkout origin/${changeTarget}
             """)
 
             withCredentials([usernamePassword(credentialsId: 'a630aebc-6861-4e69-b497-fd7f496ec46b', usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
                 sh """#!/bin/bash
                    git remote add forkedOrigin https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${env.CHANGE_FORK}/${currentRepository}
                    git fetch forkedOrigin
+                   git pull && git checkout forkedOrigin/${env.CHANGE_BRANCH}
                 """
             }
+            commitHash = sh(script: "git rev-parse HEAD | tr '\\n' ' '", returnStdout: true)
+            sh(script: "git pull && git checkout origin/${changeTarget}", returnStdout: false)
         }
         else {
+            sh(script: "git pull && git checkout ${env.CHANGE_BRANCH}", returnStdout: false)
+            commitHash = sh(script: "git rev-parse HEAD | tr '\\n' ' '", returnStdout: true)
             sh(script: "git pull && git checkout ${changeTarget}", returnStdout: false)
         }
 
@@ -99,16 +103,15 @@ def verifyChanges(String sourceCodePaths) {
     else{
         println "This build is not PR, checking out current branch and extract HEAD^1 commit to compare changes or develop when downstream_tests."
         if (env.BRANCH_NAME == "downstream_tests" || env.BRANCH_NAME == "downstream_hotfix"){
-
             // Exception added for Math PR #1832
             if (params.math_pr != null && params.math_pr == "PR-1832"){
                 return true
             }
-
             return false
         }
         else{
             sh(script: "git pull && git checkout ${env.BRANCH_NAME}", returnStdout: false)
+            commitHash = sh(script: "git rev-parse HEAD | tr '\\n' ' '", returnStdout: true)
             changeTarget = sh(script: "git rev-parse HEAD^1 | tr '\\n' ' '", returnStdout: true)
         }
     }
