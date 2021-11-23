@@ -178,7 +178,14 @@ Or, check out the new blue ocean view (easier for most errors) at ${env.RUN_DISP
 }
 
 def checkout_pr(String repo, String dir, String pr) {
-    if (pr == '') { pr = env.BRANCH_NAME }
+    if (pr == '') {
+        if (env.BRANCH_NAME == 'master'){
+            pr = "master"
+        }
+        else {
+            pr = "develop"
+        }
+    }
     prNumber = pr.tokenize('-').last()
     if (pr.startsWith("PR-")) {
         sh """
