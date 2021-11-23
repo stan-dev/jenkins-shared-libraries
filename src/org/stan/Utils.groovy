@@ -172,7 +172,7 @@ def verifyChanges(String sourceCodePaths) {
     sh(script: "git remote rm forkedOrigin || true", returnStdout: true)
     //Hard reset to change branch
     sh(script: "git merge --abort || true", returnStdout: true)
-    sh(script: "git reset --hard ${env.GIT_COMMIT}", returnStdout: true)
+    sh(script: "git reset --hard ${commitHash}", returnStdout: true)
 
     if (differences?.trim()) {
         println "There are differences in the source code, CI/CD will run."
