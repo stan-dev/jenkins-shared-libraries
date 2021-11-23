@@ -210,3 +210,23 @@ def checkout_pr(String repo, String dir, String pr) {
     }
     sh "cd ${dir} && git clean -xffd"
 }
+
+def mailBuildResults(String _ = "", additionalEmails='') {
+    script {
+        if (env.BRANCH_NAME == 'downstream_tests') return
+        try {
+            emailext (
+                subject: "[StanJenkins] ${currentBuild.currentResult}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
+                body: """${currentBuild.currentResult}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.CHANGE_TITLE} ${env.BRANCH_NAME}): Check console output at ${env.BUILD_URL}
+Or, check out the new blue ocean view (easier for most errors) at ${env.RUN_DISPLAY_URL}
+""",
+                recipientProviders: [brokenBuildSuspects(), requestor(), culprits()],
+                to: additionalEmails
+            )
+        } catch (all) {
+            println "Encountered the following exception sending email; please ignore:"
+            println all
+            println "End ignoreable email-sending exception."
+        }
+    }
+}
