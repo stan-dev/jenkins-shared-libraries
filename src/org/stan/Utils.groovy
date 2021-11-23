@@ -116,24 +116,51 @@ def verifyChanges(String sourceCodePaths) {
         }
     }
 
+    println "Trying to merge origin/master into current PR branch"
+    def mergeStatus = sh(returnStatus: true, script: "git merge --no-commit --no-ff origin/master")
+    if (mergeStatus != 0) {
+        println "Auto merge has failed, aborting merge."
+        sh(script: "git merge --abort", returnStdout: false)
+    }
+
     def differences = ""
     if (env.CHANGE_FORK) {
         println "Comparing differences between current ${commitHash} from forked repository ${env.CHANGE_FORK}/${currentRepository} and target ${changeTarget}"
-        differences = sh(script: """
-            for i in ${sourceCodePaths};
-            do
-                git diff forkedOrigin/${env.CHANGE_BRANCH} origin/${changeTarget} -- \$i
-            done
-        """, returnStdout: true)
+        if (mergeStatus != 0){
+            differences = sh(script: """
+                for i in ${sourceCodePaths};
+                do
+                    git diff forkedOrigin/${env.CHANGE_BRANCH} origin/${changeTarget} -- \$i
+                done
+            """, returnStdout: true)
+        }
+        else{
+            differences = sh(script: """
+                for i in ${sourceCodePaths};
+                do
+                    git diff --staged origin/${changeTarget} -- \$i
+                done
+            """, returnStdout: true)
+        }
     }
     else{
         println "Comparing differences between current ${commitHash} and target ${changeTarget}"
-        differences = sh(script: """
-            for i in ${sourceCodePaths};
-            do
-                git diff ${commitHash} ${changeTarget} -- \$i
-            done
-        """, returnStdout: true)
+        if (mergeStatus != 0){
+            differences = sh(script: """
+                for i in ${sourceCodePaths};
+                do
+                    git diff ${commitHash} ${changeTarget} -- \$i
+                done
+            """, returnStdout: true)
+        }
+        else {
+            differences = sh(script: """
+                for i in ${sourceCodePaths};
+                do
+                    git diff --staged ${changeTarget} -- \$i
+                done
+            """, returnStdout: true)
+        }
     }
 
     println differences
