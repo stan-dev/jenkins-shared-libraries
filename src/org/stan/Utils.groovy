@@ -67,6 +67,7 @@ def verifyChanges(String sourceCodePaths) {
         currentRepository = sh(script: "echo ${env.CHANGE_URL} | cut -d'/' -f 5", returnStdout: true)
     }
 
+    sh(script:"mkdir -p ~/.ssh", returnStdout: false)
     sh(script:"ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts", returnStdout: false)
     sh(script: "git config remote.origin.fetch '+refs/heads/*:refs/remotes/origin/*' --replace-all", returnStdout: true)
     sh(script: "git remote rm forkedOrigin || true", returnStdout: true)
