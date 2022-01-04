@@ -8,6 +8,7 @@ def killOldBuilds() {
   def pname = env.JOB_NAME.split('/')[0]
 
   println(pname)
+  println(env.JOB_BASE_NAME)
 
   hi.getItem(pname).getItem(env.JOB_BASE_NAME).getBuilds().each{ build ->
     def exec = build.getExecutor()
