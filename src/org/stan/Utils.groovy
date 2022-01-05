@@ -59,8 +59,8 @@ def isBuildAReplay() {
 def verifyChanges(String sourceCodePaths) {
 
     sh("""
-        git config --global user.email "mc.stanislaw@gmail.com"
-        git config --global user.name "Stan Jenkins"
+        git config user.email "mc.stanislaw@gmail.com"
+        git config user.name "Stan Jenkins"
     """)
 
     def commitHash = ""
