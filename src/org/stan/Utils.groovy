@@ -5,16 +5,11 @@ import jenkins.model.CauseOfInterruption.UserInterruption
 
 def killOldBuilds() {
   def hi = Hudson.instance
-  def pname = env.JOB_NAME.split('/')[0]
+  def rootProject = env.JOB_NAME.split('/')[0]
+  def secondaryProject = env.JOB_NAME.split('/')[1]
+  def targetBranchOrPR = env.CHANGE_ID?.trim() ? "PR-" + env.CHANGE_ID : env.BRANCH_NAME
 
-  println("---")
-  println(pname)
-  println(env.JOB_NAME)
-  println(env.JOB_BASE_NAME)
-  println(env.JOB_URL)
-  println("---")
-
-  hi.getItem(pname).getItem(env.JOB_BASE_NAME).getBuilds().each{ build ->
+  hi.getItem(rootProject).getItem(secondaryProject).getItem(targetBranchOrPR).getBuilds().each{ build ->
     def exec = build.getExecutor()
 
     if (build.number != currentBuild.number && exec != null) {
@@ -27,6 +22,7 @@ def killOldBuilds() {
       println("Aborted previous running build #${build.number}")
     }
   }
+
 }
 
 def isBranch(env, String b) { env.BRANCH_NAME == b }
