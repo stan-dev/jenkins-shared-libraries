@@ -58,6 +58,11 @@ def isBuildAReplay() {
 
 def verifyChanges(String sourceCodePaths) {
 
+    sh("""
+        git config --global user.email "mc.stanislaw@gmail.com"
+        git config --global user.name "Stan Jenkins"
+    """)
+
     def commitHash = ""
     def changeTarget = ""
     def currentRepository = ""
@@ -80,11 +85,6 @@ def verifyChanges(String sourceCodePaths) {
 
         if (env.CHANGE_FORK) {
             println "This PR is a fork."
-
-            sh("""
-                git config --global user.email "mc.stanislaw@gmail.com"
-                git config --global user.name "Stan Jenkins"
-            """)
 
             withCredentials([usernamePassword(credentialsId: 'a630aebc-6861-4e69-b497-fd7f496ec46b', usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
                 sh """#!/bin/bash
