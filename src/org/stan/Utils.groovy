@@ -7,8 +7,12 @@ def killOldBuilds() {
   def hi = Hudson.instance
   def pname = env.JOB_NAME.split('/')[0]
 
+  println("---")
   println(pname)
+  println(env.JOB_NAME)
   println(env.JOB_BASE_NAME)
+  println(env.JOB_URL)
+  println("---")
 
   hi.getItem(pname).getItem(env.JOB_BASE_NAME).getBuilds().each{ build ->
     def exec = build.getExecutor()
