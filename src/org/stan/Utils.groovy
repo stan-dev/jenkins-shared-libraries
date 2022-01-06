@@ -75,10 +75,10 @@ def verifyChanges(String sourceCodePaths) {
         currentRepository = sh(script: "echo ${env.CHANGE_URL} | cut -d'/' -f 5", returnStdout: true)
     }
 
-    sh(script: "git submodule update --init --recursive", returnStdout: true)
+    sh(script: "git submodule update --init --recursive --remote", returnStdout: true)
     sh(script: "git config remote.origin.fetch '+refs/heads/*:refs/remotes/origin/*' --replace-all", returnStdout: true)
     sh(script: "git remote rm forkedOrigin || true", returnStdout: true)
-    sh(script: "git fetch --all", returnStdout: true)
+    sh(script: "git fetch --all --recurse-submodules=yes", returnStdout: true)
 
     if (env.CHANGE_TARGET) {
         println "This build is a PR, checking out target branch to compare changes."
