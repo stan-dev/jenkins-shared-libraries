@@ -5,9 +5,11 @@ import jenkins.model.CauseOfInterruption.UserInterruption
 
 def killOldBuilds() {
   def hi = Hudson.instance
-  def pname = env.JOB_NAME.split('/')[0]
+  def rootProject = env.JOB_NAME.split('/')[0]
+  def secondaryProject = env.JOB_NAME.split('/')[1]
+  def targetBranchOrPR = env.CHANGE_ID?.trim() ? "PR-" + env.CHANGE_ID : env.BRANCH_NAME
 
-  hi.getItem(pname).getItem(env.JOB_BASE_NAME).getBuilds().each{ build ->
+  hi.getItem(rootProject).getItem(secondaryProject).getItem(targetBranchOrPR).getBuilds().each{ build ->
     def exec = build.getExecutor()
 
     if (build.number != currentBuild.number && exec != null) {
@@ -20,6 +22,7 @@ def killOldBuilds() {
       println("Aborted previous running build #${build.number}")
     }
   }
+
 }
 
 def isBranch(env, String b) { env.BRANCH_NAME == b }
@@ -55,6 +58,11 @@ def isBuildAReplay() {
 
 def verifyChanges(String sourceCodePaths) {
 
+    sh """
+        git config user.email "mc.stanislaw@gmail.com"
+        git config user.name "Stan Jenkins"
+    """
+
     def commitHash = ""
     def changeTarget = ""
     def currentRepository = ""
@@ -67,11 +75,9 @@ def verifyChanges(String sourceCodePaths) {
         currentRepository = sh(script: "echo ${env.CHANGE_URL} | cut -d'/' -f 5", returnStdout: true)
     }
 
-    sh(script:"mkdir -p ~/.ssh", returnStdout: false)
-    sh(script:"ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts", returnStdout: false)
     sh(script: "git config remote.origin.fetch '+refs/heads/*:refs/remotes/origin/*' --replace-all", returnStdout: true)
     sh(script: "git remote rm forkedOrigin || true", returnStdout: true)
-    sh(script: "git fetch --all", returnStdout: true)
+    sh(script: "git fetch --all || true", returnStdout: true)
 
     if (env.CHANGE_TARGET) {
         println "This build is a PR, checking out target branch to compare changes."
@@ -79,11 +85,6 @@ def verifyChanges(String sourceCodePaths) {
 
         if (env.CHANGE_FORK) {
             println "This PR is a fork."
-
-            sh("""
-                git config --global user.email "mc.stanislaw@gmail.com"
-                git config --global user.name "Stan Jenkins"
-            """)
 
             withCredentials([usernamePassword(credentialsId: 'a630aebc-6861-4e69-b497-fd7f496ec46b', usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
                 sh """#!/bin/bash
