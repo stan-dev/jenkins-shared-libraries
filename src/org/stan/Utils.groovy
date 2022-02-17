@@ -64,7 +64,7 @@ def verifyChanges(String sourceCodePaths) {
     """
 
     // If last commit message contains [ci skip] the current build will be skipped
-    checkCiSkip = sh (script: "git log -1 | grep '[ci skip]'", returnStatus: true)
+    checkCiSkip = sh (script: "git log -1 | grep '.*\\[ci skip\\].*'", returnStatus: true)
     if (checkCiSkip == 0) {
         env.CI_SKIP = "true"
         error "'[ci skip]' found in git commit message. Aborting."
