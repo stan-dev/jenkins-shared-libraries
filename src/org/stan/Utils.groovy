@@ -72,7 +72,7 @@ def verifyChanges(String sourceCodePaths) {
     }
 
     // If last commit message contains [ci run all] we will run all stages no matter of source code changes
-    checkCiRunAll = sh (script: "git log -1 | grep '[ci run all]'", returnStatus: true)
+    checkCiRunAll = sh (script: "git log -1 | grep '.*\\[ci run all\\].*'", returnStatus: true)
     if (checkCiRunAll == 0) {
         return false
     }
