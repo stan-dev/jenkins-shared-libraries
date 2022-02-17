@@ -63,6 +63,20 @@ def verifyChanges(String sourceCodePaths) {
         git config user.name "Stan Jenkins"
     """
 
+    // If last commit message contains [ci skip] the current build will be skipped
+    checkCiSkip = sh (script: "git log -1 | grep '[ci skip]'", returnStatus: true)
+    if (checkCiSkip == 0) {
+        env.CI_SKIP = "true"
+        error "'[ci skip]' found in git commit message. Aborting."
+        currentBuild.result = 'NOT_BUILT'
+    }
+
+    // If last commit message contains [ci run all] we will run all stages no matter of source code changes
+    checkCiRunAll = sh (script: "git log -1 | grep '[ci run all]'", returnStatus: true)
+    if (checkCiRunAll == 0) {
+        return false
+    }
+
     def commitHash = ""
     def changeTarget = ""
     def currentRepository = ""
