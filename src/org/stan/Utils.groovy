@@ -56,7 +56,7 @@ def isBuildAReplay() {
   currentBuild.rawBuild.getCauses().any{ cause -> cause.toString().contains(replyClassName) }
 }
 
-def verifyChanges(String sourceCodePaths) {
+def verifyChanges(String sourceCodePaths, String mergeWith = "develop") {
 
     sh """
         git config user.email "mc.stanislaw@gmail.com"
@@ -106,7 +106,7 @@ def verifyChanges(String sourceCodePaths) {
         }
 
         println "Trying to merge origin/master into current PR branch"
-        mergeStatus = sh(returnStatus: true, script: "git merge --no-commit --no-ff origin/master")
+        mergeStatus = sh(returnStatus: true, script: "git merge --no-commit --no-ff origin/${mergeWith}")
         if (mergeStatus != 0) {
             println "Auto merge has failed, aborting merge."
             sh(script: "git merge --abort", returnStdout: false)
