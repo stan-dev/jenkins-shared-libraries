@@ -90,18 +90,18 @@ def verifyChanges(String sourceCodePaths, String mergeWith = "develop") {
                 sh """#!/bin/bash
                    git remote add forkedOrigin https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${env.CHANGE_FORK}/${currentRepository}
                    git fetch forkedOrigin
-                   git pull && git checkout forkedOrigin/${env.CHANGE_BRANCH}
+                   git checkout forkedOrigin/${env.CHANGE_BRANCH}
                 """
             }
 
             commitHash = sh(script: "git rev-parse HEAD | tr '\\n' ' '", returnStdout: true)
-            sh(script: "git pull && git checkout origin/${changeTarget}", returnStdout: false)
+            sh(script: "git checkout origin/${changeTarget}", returnStdout: false)
             sh(script: "git checkout forkedOrigin/${env.CHANGE_BRANCH}", returnStdout: false)
         }
         else {
             sh(script: "git pull && git checkout ${env.CHANGE_BRANCH}", returnStdout: false)
             commitHash = sh(script: "git rev-parse HEAD | tr '\\n' ' '", returnStdout: true)
-            sh(script: "git pull && git checkout ${changeTarget}", returnStdout: false)
+            sh(script: "git checkout ${changeTarget}", returnStdout: false)
             sh(script: "git checkout ${env.CHANGE_BRANCH}", returnStdout: false)
         }
 
