@@ -99,7 +99,7 @@ def verifyChanges(String sourceCodePaths, String mergeWith = "develop") {
             sh(script: "git checkout forkedOrigin/${env.CHANGE_BRANCH}", returnStdout: false)
         }
         else {
-            sh(script: "git pull && git checkout ${env.CHANGE_BRANCH}", returnStdout: false)
+            sh(script: "git checkout ${env.CHANGE_BRANCH}", returnStdout: false)
             commitHash = sh(script: "git rev-parse HEAD | tr '\\n' ' '", returnStdout: true)
             sh(script: "git checkout ${changeTarget}", returnStdout: false)
             sh(script: "git checkout ${env.CHANGE_BRANCH}", returnStdout: false)
@@ -122,7 +122,7 @@ def verifyChanges(String sourceCodePaths, String mergeWith = "develop") {
             return false
         }
         else{
-            sh(script: "git pull && git checkout ${env.BRANCH_NAME}", returnStdout: false)
+            sh(script: "git checkout ${env.BRANCH_NAME}", returnStdout: false)
             commitHash = sh(script: "git rev-parse HEAD | tr '\\n' ' '", returnStdout: true)
             changeTarget = sh(script: "git rev-parse HEAD^1 | tr '\\n' ' '", returnStdout: true)
         }
