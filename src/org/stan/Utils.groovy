@@ -78,6 +78,7 @@ def verifyChanges(String sourceCodePaths, String mergeWith = "develop") {
     sh(script: "git config remote.origin.fetch '+refs/heads/*:refs/remotes/origin/*' --replace-all", returnStdout: true)
     sh(script: "git remote rm forkedOrigin || true", returnStdout: true)
     sh(script: "git fetch --all || true", returnStdout: true)
+    sh(script: "git pull --all || true", returnStdout: true)
 
     if (env.CHANGE_TARGET) {
         println "This build is a PR, checking out target branch to compare changes."
