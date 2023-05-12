@@ -96,13 +96,13 @@ def verifyChanges(String sourceCodePaths, String mergeWith = "develop") {
             }
 
             commitHash = sh(script: "git rev-parse HEAD | tr '\\n' ' '", returnStdout: true)
-            sh(script: "git checkout -f origin/${changeTarget}", returnStdout: false)
+            sh(script: "git checkout -f origin/${changeTarget} && git pull", returnStdout: false)
             sh(script: "git checkout -f forkedOrigin/${env.CHANGE_BRANCH}", returnStdout: false)
         }
         else {
             sh(script: "git checkout -f ${env.CHANGE_BRANCH}", returnStdout: false)
             commitHash = sh(script: "git rev-parse HEAD | tr '\\n' ' '", returnStdout: true)
-            sh(script: "git checkout -f ${changeTarget}", returnStdout: false)
+            sh(script: "git checkout -f ${changeTarget} && git pull", returnStdout: false)
             sh(script: "git checkout -f ${env.CHANGE_BRANCH}", returnStdout: false)
         }
 
@@ -150,12 +150,12 @@ def verifyChanges(String sourceCodePaths, String mergeWith = "develop") {
         }
     }
     else{
-        println "Comparing differences between current ${commitHash} and target ${changeTarget}"
+        println "Comparing differences between current ${commitHash} and target origin/${changeTarget}"
         if (mergeStatus != 0){
             differences = sh(script: """
                 for i in ${sourceCodePaths};
                 do
-                    git diff ${commitHash} ${changeTarget} -- \$i
+                    git diff ${commitHash} origin/${changeTarget} -- \$i
                 done
             """, returnStdout: true)
         }
