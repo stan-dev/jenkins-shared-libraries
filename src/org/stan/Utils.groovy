@@ -150,12 +150,12 @@ def verifyChanges(String sourceCodePaths, String mergeWith = "develop") {
         }
     }
     else{
-        println "Comparing differences between current ${commitHash} and target origin/${changeTarget}"
+        println "Comparing differences between current ${commitHash} and target ${changeTarget}"
         if (mergeStatus != 0){
             differences = sh(script: """
                 for i in ${sourceCodePaths};
                 do
-                    git diff ${commitHash} origin/${changeTarget} -- \$i
+                    git diff ${commitHash} ${changeTarget} -- \$i
                 done
             """, returnStdout: true)
         }
