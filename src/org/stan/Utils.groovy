@@ -96,7 +96,7 @@ def verifyChanges(String sourceCodePaths, String mergeWith = "develop") {
             }
 
             commitHash = sh(script: "git rev-parse HEAD | tr '\\n' ' '", returnStdout: true)
-            sh(script: "git checkout -f origin/${changeTarget} && git pull", returnStdout: false)
+            sh(script: "git checkout -f origin/${changeTarget}", returnStdout: false)
             sh(script: "git checkout -f forkedOrigin/${env.CHANGE_BRANCH}", returnStdout: false)
         }
         else {
