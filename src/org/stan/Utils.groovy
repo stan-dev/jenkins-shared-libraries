@@ -204,6 +204,7 @@ def verifyChanges(String sourceCodePaths, String mergeWith = "develop") {
 }
 
 def checkout_pr(String repo, String dir, String pr) {
+    println env.BRANCH_NAME
     if (pr == '') {
         if (env.BRANCH_NAME == 'master'){
             pr = "master"
@@ -212,6 +213,7 @@ def checkout_pr(String repo, String dir, String pr) {
             pr = "develop"
         }
     }
+    println pr
     prNumber = pr.tokenize('-').last()
     if (pr.startsWith("PR-")) {
         sh """
