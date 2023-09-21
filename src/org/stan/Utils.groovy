@@ -206,7 +206,7 @@ def verifyChanges(String sourceCodePaths, String mergeWith = "develop") {
 def checkout_pr(String repo, String dir, String pr) {
     println env.BRANCH_NAME
     if (pr == '') {
-        if (env.BRANCH_NAME == 'master'){
+        if (env.BRANCH_NAME == 'master' || env.CHANGE_TARGET == 'master'){
             pr = "master"
         }
         else {
