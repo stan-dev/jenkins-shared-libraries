@@ -193,10 +193,10 @@ def verifyChanges(String sourceCodePaths, String mergeWith = "develop") {
         println "There are differences in the source code, CI/CD will run."
         return false
     }
-    else if (isBuildAReplay()){
-        println "Build is a replay."
-        return false
-    }
+//     else if (isBuildAReplay()){
+//         println "Build is a replay."
+//         return false
+//     }
     else{
         println "There are no differences in the source code, CI/CD will not run."
         return true
