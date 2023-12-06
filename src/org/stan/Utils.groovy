@@ -87,9 +87,14 @@ def verifyChanges(String sourceCodePaths, String mergeWith = "develop") {
         if (env.CHANGE_FORK) {
             println "This PR is a fork."
 
+            // Content of CHANGE_FORK varies, see https://issues.jenkins-ci.org/browse/JENKINS-58450.
+            forkedRepository = env.CHANGE_FORK.matches('.*/.*') ?
+                    env.CHANGE_FORK :
+                    env.CHANGE_FORK + "/${currentRepository}"
+
             withCredentials([usernamePassword(credentialsId: 'a630aebc-6861-4e69-b497-fd7f496ec46b', usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
                 sh """#!/bin/bash
-                   git remote add forkedOrigin https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${env.CHANGE_FORK}
+                   git remote add forkedOrigin https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${forkedRepository}
                    git fetch forkedOrigin
                    git checkout -f forkedOrigin/${env.CHANGE_BRANCH}
                 """
