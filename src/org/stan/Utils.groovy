@@ -89,7 +89,7 @@ def verifyChanges(String sourceCodePaths, String mergeWith = "develop") {
 
             withCredentials([usernamePassword(credentialsId: 'a630aebc-6861-4e69-b497-fd7f496ec46b', usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
                 sh """#!/bin/bash
-                   git remote add forkedOrigin https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${env.CHANGE_FORK}/${currentRepository}
+                   git remote add forkedOrigin https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${env.CHANGE_FORK}
                    git fetch forkedOrigin
                    git checkout -f forkedOrigin/${env.CHANGE_BRANCH}
                 """
