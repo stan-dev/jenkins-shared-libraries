@@ -227,7 +227,7 @@ def checkout_pr(String repo, String dir, String pr) {
           git checkout refs/remotes/origin/pr/${prNumber}/merge
         """
     } else {
-        sh "cd ${dir} && git remote update && git fetch && git pull origin ${pr} && git checkout ${pr} || true && git checkout --track origin/${pr} || true"
+        sh "cd ${dir} && git remote update && git fetch origin ${pr}:${pr} && git pull origin ${pr} && git checkout ${pr}"
 
     }
     sh "cd ${dir} && git clean -xffd"
