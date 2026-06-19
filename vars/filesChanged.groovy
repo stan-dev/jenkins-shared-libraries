@@ -7,19 +7,20 @@
  */
 
 def call(String[] paths) {
-  def commitMsg = ""
-  if (currentBuild.changeSets && currentBuild.changeSets[0]) {
-    commitMsg = currentBuild.changeSets[0][0].getMsg()
-  }
+  for (changeSet in currentBuild.changeSets) {
+    for (change in changeSet) {
+      def commitMsg = change.getMsg()
 
-  // If last commit message contains [ci skip] the current build will be skipped
-  if (commitMsg.contains("[ci skip]")) {
-    return false
-  }
+      // If last commit message contains [ci skip] the current build will be skipped
+      if (commitMsg.contains("[ci skip]")) {
+        return false
+      }
 
-  // If last commit message contains [ci run all] we will run all stages no matter of source code changes
-  if (commitMsg.contains("[ci run all]")) {
-    return true
+      // If last commit message contains [ci run all] we will run all stages no matter of source code changes
+      if (commitMsg.contains("[ci run all]")) {
+        return true
+      }
+    }
   }
 
   def changeTarget = null
