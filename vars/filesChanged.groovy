@@ -7,23 +7,27 @@
  */
 
 def call(String[] paths) {
-  for (changeSet in currentBuild.changeSets) {
-    for (change in changeSet) {
-      def commitMsg = change.getMsg()
+  def changeSets = currentBuild.changeSets.collectMany { it }
+  def changeTarget = null
 
-      // If last commit message contains [ci skip] the current build will be skipped
-      if (commitMsg.contains("[ci skip]")) {
-        return false
-      }
-
-      // If last commit message contains [ci run all] we will run all stages no matter of source code changes
-      if (commitMsg.contains("[ci run all]")) {
-        return true
-      }
-    }
+  def commitMsgs = []
+  if (changeSets) {
+    commitMsgs = changeSets.collect { it.getMsg() }
+  } else {
+    // fall back to current commit
+    changeTarget = "HEAD^"
+    commitMsgs <<= sh(script: "git show -s --format=%B", returnStdout: true)
   }
 
-  def changeTarget = null
+  if (commitMsgs.any { it.contains("[ci skip]") }) {
+    // If last commit message contains [ci skip] the current build will be skipped
+    return false
+  }
+  if (commitMsgs.any { it.contains("[ci run all]") }) {
+    // If last commit message contains [ci run all] we will run all stages no matter of source code changes
+    return true
+  }
+
   if (env.CHANGE_TARGET) {
     changeTarget = "refs/remotes/origin/${env.CHANGE_TARGET}"
   } else {
@@ -34,18 +38,16 @@ def call(String[] paths) {
   }
 
   if (changeTarget) {
-    /* FIXME: unsafe path shell handling */
+    /* XXX: unsafe path shell handling */
     def pathstr = paths.join(" ")
     def diff = sh(script: "git diff --quiet ${changeTarget} -- ${pathstr}", returnStatus: true)
     return (diff != 0)
   }
 
-  return currentBuild.changeSets.any { changeSet ->
-    changeSet.any { change ->
-      change.getAffectedPaths().any { path ->
-        /* FIXME: overinclusive prefix match */
-        path.startsWithAny(paths)
-      }
+  return changeSets.any { change ->
+    change.getAffectedPaths().any { path ->
+      /* XXX: overinclusive prefix match */
+      path.startsWithAny(paths)
     }
   }
 }
