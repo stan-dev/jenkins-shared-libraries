@@ -16,7 +16,7 @@ def call(String[] paths) {
   } else {
     // fall back to current commit
     changeTarget = "HEAD^"
-    commitMsgs <<= sh(script: "git show -s --format=%B", returnStdout: true)
+    commitMsgs <<= sh(script: "git show -s --raw", returnStdout: true)
   }
 
   if (commitMsgs.any { it.contains("[ci skip]") }) {
