@@ -11,7 +11,7 @@ def call(String path, String pr = "") {
     ref = "pull/${pr.minus('PR-')}/merge"
 
   dir (path) {
-    sh """
+    batsh """
       git fetch origin +refs/$ref:$pr
       git checkout $pr
     """
