@@ -30,11 +30,6 @@ def call(String[] paths) {
 
   if (env.CHANGE_TARGET) {
     changeTarget = "refs/remotes/origin/${env.CHANGE_TARGET}"
-  } else {
-    /* always run builds on downstream_ branches (mainly for stan builds from math updates) */
-    if (env.BRANCH_NAME == "downstream_tests" || env.BRANCH_NAME == "downstream_hotfix") {
-      return true
-    }
   }
 
   if (changeTarget) {
