@@ -12,7 +12,7 @@ def call(String path, String pr = "") {
 
   dir (path) {
     batsh """
-      git fetch origin +refs/$ref:$pr
+      git fetch --no-recurse-submodules origin +refs/$ref:$pr
       git checkout $pr
     """
   }
