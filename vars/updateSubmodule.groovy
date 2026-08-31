@@ -6,7 +6,7 @@ def call(String repo, String branch, String path, String commit = '') {
   checkout scm: submodule, changelog: false, poll: false
   def nocommit = sh(returnStatus: true, script: """
     echo "160000 commit ${commit}\t$path" | git update-index --index-info
-    GIT_COMMITTER_NAME="Stan Jenkins" GIT_COMMITTER_EMAIL="mc.stanislow@gmail.com" git commit --author="Stan BuildBot <mc.stanislaw@gmail.com>" -m "Update submodules"
+    GIT_COMMITTER_NAME="Stan Jenkins" GIT_COMMITTER_EMAIL="mc.stanislaw@gmail.com" git commit --author="Stan Jenkins <mc.stanislaw@gmail.com>" -m "Update submodules"
   """)
   if (!nocommit)
     gitPush(gitScm: submodule, targetBranch: branch, targetRepo: 'origin')
